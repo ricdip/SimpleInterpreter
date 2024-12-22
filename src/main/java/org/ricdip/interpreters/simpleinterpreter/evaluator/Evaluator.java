@@ -20,6 +20,8 @@ public class Evaluator {
         builtinFunctionMap.put(Objects.REST.getFunctionName(), Objects.REST);
         builtinFunctionMap.put(Objects.PUSH.getFunctionName(), Objects.PUSH);
         builtinFunctionMap.put(Objects.APPEND.getFunctionName(), Objects.APPEND);
+        builtinFunctionMap.put(Objects.POP.getFunctionName(), Objects.POP);
+        builtinFunctionMap.put(Objects.REMOVE_LAST.getFunctionName(), Objects.REMOVE_LAST);
     }
 
     public EvaluatedObject eval(Node node, Environment environment) {

@@ -532,6 +532,32 @@ class EvaluatorTest {
                         null
                         """),
                 Arguments.of("""
+                        let str = "test"
+                        
+                        first(str)
+                        """, """
+                        "t"
+                        """),
+                Arguments.of("""
+                        first("test")
+                        """, """
+                        "t"
+                        """),
+                Arguments.of("""
+                        let str = "t"
+                        
+                        first(str)
+                        """, """
+                        "t"
+                        """),
+                Arguments.of("""
+                        let str = ""
+                        
+                        first(str)
+                        """, """
+                        null
+                        """),
+                Arguments.of("""
                         let array = [1,2,3]
                         
                         rest(array)
@@ -555,7 +581,33 @@ class EvaluatorTest {
                         
                         rest(array)
                         """, """
-                        []
+                        null
+                        """),
+                Arguments.of("""
+                        let str = "test"
+                        
+                        rest(str)
+                        """, """
+                        "est"
+                        """),
+                Arguments.of("""
+                        rest("test")
+                        """, """
+                        "est"
+                        """),
+                Arguments.of("""
+                        let str = "t"
+                        
+                        rest(str)
+                        """, """
+                        ""
+                        """),
+                Arguments.of("""
+                        let str = ""
+                        
+                        rest(str)
+                        """, """
+                        null
                         """),
                 Arguments.of("""
                         let array = [2,3]
@@ -570,6 +622,18 @@ class EvaluatorTest {
                         [1,2,3]
                         """),
                 Arguments.of("""
+                        let str = "bc"
+                        
+                        push("bc", "a")
+                        """, """
+                        "abc"
+                        """),
+                Arguments.of("""
+                        push("bc", "a")
+                        """, """
+                        "abc"
+                        """),
+                Arguments.of("""
                         let array = [1,2]
                         
                         append(array, 3)
@@ -580,6 +644,88 @@ class EvaluatorTest {
                         append([1,2], 3)
                         """, """
                         [1,2,3]
+                        """),
+                Arguments.of("""
+                        let str = "ab"
+                        
+                        append(str, "c")
+                        """, """
+                        "abc"
+                        """),
+                Arguments.of("""
+                        append("ab", "c")
+                        """, """
+                        "abc"
+                        """),
+                Arguments.of("""
+                        let array = [1,2]
+                        
+                        pop(array)
+                        """, """
+                        1
+                        """),
+                Arguments.of("""
+                        let array = [1,2,3]
+                        
+                        pop(array)
+                        array
+                        """, """
+                        [2,3]
+                        """),
+                Arguments.of("""
+                        pop([])
+                        """, """
+                        null
+                        """),
+                Arguments.of("""
+                        let str = "abc"
+                        
+                        pop(str)
+                        """, """
+                        "a"
+                        """),
+                Arguments.of("""
+                        let str = "abc"
+                        
+                        pop(str)
+                        str
+                        """, """
+                        "bc"
+                        """),
+                Arguments.of("""
+                        let array = [1,2]
+                        
+                        removeLast(array)
+                        """, """
+                        2
+                        """),
+                Arguments.of("""
+                        let array = [1,2,3]
+                        
+                        removeLast(array)
+                        array
+                        """, """
+                        [1,2]
+                        """),
+                Arguments.of("""
+                        removeLast([])
+                        """, """
+                        null
+                        """),
+                Arguments.of("""
+                        let str = "abc"
+                        
+                        removeLast(str)
+                        """, """
+                        "c"
+                        """),
+                Arguments.of("""
+                        let str = "abc"
+                        
+                        removeLast(str)
+                        str
+                        """, """
+                        "ab"
                         """)
         );
     }
