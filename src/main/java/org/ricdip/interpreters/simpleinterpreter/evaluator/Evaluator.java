@@ -286,7 +286,7 @@ public class Evaluator {
         } else if (evaluatedRight instanceof ErrorObject errorObjectRight) {
             return errorObjectRight;
         } else {
-            return new ErrorObject("Cannot solve infix expression %s %s %s", left, operator.getSymbols(), right);
+            return new ErrorObject("Cannot solve infix expression %s %s %s", evaluatedLeft.getType().name(), operator.getSymbols(), evaluatedRight.getType().name());
         }
     }
 
@@ -339,7 +339,7 @@ public class Evaluator {
         } else if (evaluatedObject instanceof BuiltinFunction builtinFunction) {
             return callBuiltinFunction(builtinFunction, actualParameters, environment);
         } else if (evaluatedObject instanceof FunctionObject functionObject) {
-            return callFunctionObject(functionObject, actualParameters);
+            return callFunctionObject(functionObject, actualParameters, environment);
         } else {
             return new ErrorObject("Cannot invoke %s: not a %s", evaluatedObject.getType().name(), ObjectTypes.FUNCTION);
         }
@@ -373,9 +373,10 @@ public class Evaluator {
      *
      * @param functionObject   the {@link FunctionObject} to call
      * @param actualParameters the {@link List<Expression>} to bind to the function formal parameters
+     * @param environment      the {@link Environment} object that contains the bindings
      * @return the result of the last evaluated statement of the called function
      */
-    private EvaluatedObject callFunctionObject(FunctionObject functionObject, List<Expression> actualParameters) {
+    private EvaluatedObject callFunctionObject(FunctionObject functionObject, List<Expression> actualParameters, Environment environment) {
         // check if parameters binding is possible
         if (functionObject.getFormalParameters().size() != actualParameters.size()) {
             return new ErrorObject(
@@ -385,33 +386,35 @@ public class Evaluator {
             );
         }
 
-        // create function call environment (inner scope) with the environment previously stored in the function as
+        // evaluate actual parameters using current environment
+        List<EvaluatedObject> evaluatedActualParameters = evalActualParameters(actualParameters, environment);
+
+        // check actual parameter evaluation error
+        if (evaluatedActualParameters.size() == 1 && evaluatedActualParameters.getFirst() instanceof ErrorObject errorObject) {
+            return errorObject;
+        }
+
+        // create function call environment (inner scope) extending the environment previously stored in the function as
         // outer environment (outer scope): if an identifier is not found in the inner scope, it will be searched in
-        // the outer scope. All the identifiers declared before function creation are now accessible and so,
-        // closures are now possible:
+        // the outer scope.
+        // All the identifiers declared before function creation are now accessible and so,
+        // CLOSURES are now possible:
         // > let newAdder = fn(x) { fn(y) { x + y } };
         // > let addTwo = newAdder(2);
         // > x
-        // ERROR: identifier not found: x
+        //      identifier not found: x
         // > addTwo(3)
         // > 5
+        //
         // (x is not bound to a value in the inner scope, but addTwo still has access to it (outer scope))
         // (newAdder is a higher-order function: a function that either return other functions or receive functions as arguments)
         // (in this language functions are first-class citizens, we can pass functions like any other value)
         Environment innerEnvironment = new Environment(functionObject.getFunctionEnvironment());
         for (int i = 0; i < functionObject.getFormalParameters().size(); i++) {
-            // evaluate current actual parameter
-            EvaluatedObject evaluatedParameter = eval(actualParameters.get(i), innerEnvironment);
-
-            // check errors
-            if (evaluatedParameter instanceof ErrorObject errorObject) {
-                return errorObject;
-            }
-
             // bind current actual parameter to current formal parameter
             innerEnvironment.put(
                     functionObject.getFormalParameters().get(i),
-                    evaluatedParameter
+                    evaluatedActualParameters.get(i)
             );
         }
 
@@ -420,6 +423,29 @@ public class Evaluator {
         EvaluatedObject functionCallReturnValue = eval(functionObject.getFunctionBody(), innerEnvironment);
 
         return unwrapReturnValue(functionCallReturnValue);
+    }
+
+    /**
+     * Evaluates the {@link List<Expression>} that represent the actual parameters.
+     *
+     * @param actualParameters the {@link List<Expression>} of actual parameters
+     * @param environment      the {@link Environment} object that contains the bindings
+     * @return the {@link List<EvaluatedObject>} of evaluated actual parameters
+     */
+    private List<EvaluatedObject> evalActualParameters(List<Expression> actualParameters, Environment environment) {
+        List<EvaluatedObject> evaluatedParameters = new ArrayList<>();
+
+        for (Expression actualParameter : actualParameters) {
+            EvaluatedObject evaluatedParameter = eval(actualParameter, environment);
+
+            if (evaluatedParameter instanceof ErrorObject errorObject) {
+                return List.of(errorObject);
+            }
+
+            evaluatedParameters.add(evaluatedParameter);
+        }
+
+        return evaluatedParameters;
     }
 
     /**

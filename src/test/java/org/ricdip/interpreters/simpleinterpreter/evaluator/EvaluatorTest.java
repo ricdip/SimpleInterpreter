@@ -726,6 +726,56 @@ class EvaluatorTest {
                         str
                         """, """
                         "ab"
+                        """),
+                // more complex code
+                Arguments.of("""
+                        let map = fn(array, func){
+                            let acc = fn(curr, res) {
+                                if(len(curr) == 0) {
+                                    res
+                                } else {
+                                    acc(rest(curr), append(res, func(first(curr))))
+                                }
+                            }
+                            acc(array, [])
+                        }
+                        
+                        let array = [1,2,3,4,5]
+                        let double = fn(x){x*x}
+                        
+                        map(array, double)
+                        """, """
+                        [1,4,9,16,25]
+                        """),
+                Arguments.of("""
+                        let fib = fn(n) {
+                            if(n == 0) {
+                                return 0
+                            }
+                        
+                            if(n == 1) {
+                                return 1
+                            }
+                        
+                            return fib(n - 1) + fib(n - 2)
+                        }
+                        
+                        fib(12)
+                        """, """
+                        144
+                        """),
+                Arguments.of("""
+                        let fact = fn(n) {
+                            if(n == 0) {
+                                return 1
+                            } else {
+                                return n * fact(n - 1)
+                            }
+                        }
+                        
+                        fact(5)
+                        """, """
+                        120
                         """)
         );
     }
