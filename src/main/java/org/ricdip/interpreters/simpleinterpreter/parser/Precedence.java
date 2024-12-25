@@ -6,6 +6,7 @@ public enum Precedence {
     SUMMATION,
     MULTIPLICATION,
     PREFIX,
+    POSTFIX,
     CALL,
     INDEX
 }

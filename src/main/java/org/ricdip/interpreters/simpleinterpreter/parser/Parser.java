@@ -25,7 +25,8 @@ public class Parser {
     private final Lexer lexer;
     private final Map<TokenType, Supplier<Expression>> prefixParseFunctionMap = new HashMap<>();
     private final Map<TokenType, Function<Expression, Expression>> infixParseFunctionMap = new HashMap<>();
-    private final Map<TokenType, Precedence> infixOperatorPrecedenceMap = new HashMap<>();
+    private final Map<TokenType, Function<Expression, Expression>> postfixParseFunctionMap = new HashMap<>();
+    private final Map<TokenType, Precedence> operatorPrecedenceMap = new HashMap<>();
     private Token currentToken;
     private Token peekToken;
 
@@ -59,19 +60,25 @@ public class Parser {
         infixParseFunctionMap.put(TokenType.LPAREN, this::parseCallExpression);
         infixParseFunctionMap.put(TokenType.LSQUARE, this::parseIndexExpression);
 
-        // operator precedence map for infix expressions
-        infixOperatorPrecedenceMap.put(Operator.LT.getTokenType(), Precedence.COMPARISON);
-        infixOperatorPrecedenceMap.put(Operator.GT.getTokenType(), Precedence.COMPARISON);
-        infixOperatorPrecedenceMap.put(Operator.EQ.getTokenType(), Precedence.COMPARISON);
-        infixOperatorPrecedenceMap.put(Operator.NEQ.getTokenType(), Precedence.COMPARISON);
-        infixOperatorPrecedenceMap.put(Operator.LTEQ.getTokenType(), Precedence.COMPARISON);
-        infixOperatorPrecedenceMap.put(Operator.GTEQ.getTokenType(), Precedence.COMPARISON);
-        infixOperatorPrecedenceMap.put(Operator.PLUS.getTokenType(), Precedence.SUMMATION);
-        infixOperatorPrecedenceMap.put(Operator.MINUS.getTokenType(), Precedence.SUMMATION);
-        infixOperatorPrecedenceMap.put(Operator.ASTERISK.getTokenType(), Precedence.MULTIPLICATION);
-        infixOperatorPrecedenceMap.put(Operator.SLASH.getTokenType(), Precedence.MULTIPLICATION);
-        infixOperatorPrecedenceMap.put(Operator.CALL.getTokenType(), Precedence.CALL);
-        infixOperatorPrecedenceMap.put(Operator.INDEX.getTokenType(), Precedence.INDEX);
+        // postfix parse function table
+        postfixParseFunctionMap.put(TokenType.INCREMENT, this::parseExpressionPostfix);
+        postfixParseFunctionMap.put(TokenType.DECREMENT, this::parseExpressionPostfix);
+
+        // operator precedence map for expressions
+        operatorPrecedenceMap.put(Operator.LT.getTokenType(), Precedence.COMPARISON);
+        operatorPrecedenceMap.put(Operator.GT.getTokenType(), Precedence.COMPARISON);
+        operatorPrecedenceMap.put(Operator.EQ.getTokenType(), Precedence.COMPARISON);
+        operatorPrecedenceMap.put(Operator.NEQ.getTokenType(), Precedence.COMPARISON);
+        operatorPrecedenceMap.put(Operator.LTEQ.getTokenType(), Precedence.COMPARISON);
+        operatorPrecedenceMap.put(Operator.GTEQ.getTokenType(), Precedence.COMPARISON);
+        operatorPrecedenceMap.put(Operator.PLUS.getTokenType(), Precedence.SUMMATION);
+        operatorPrecedenceMap.put(Operator.MINUS.getTokenType(), Precedence.SUMMATION);
+        operatorPrecedenceMap.put(Operator.ASTERISK.getTokenType(), Precedence.MULTIPLICATION);
+        operatorPrecedenceMap.put(Operator.SLASH.getTokenType(), Precedence.MULTIPLICATION);
+        operatorPrecedenceMap.put(Operator.CALL.getTokenType(), Precedence.CALL);
+        operatorPrecedenceMap.put(Operator.INDEX.getTokenType(), Precedence.INDEX);
+        operatorPrecedenceMap.put(Operator.INCREMENT.getTokenType(), Precedence.POSTFIX);
+        operatorPrecedenceMap.put(Operator.DECREMENT.getTokenType(), Precedence.POSTFIX);
 
         // prepare lexer before starting
         nextToken();
@@ -176,10 +183,10 @@ public class Parser {
     /**
      * Parses an expression
      *
-     * @param precedence a {@link Precedence} value for the current expression
+     * @param currentPrecedence a {@link Precedence} value for the current expression
      * @return the created {@link Expression}
      */
-    private Expression parseExpression(Precedence precedence) {
+    private Expression parseExpression(Precedence currentPrecedence) {
         Supplier<Expression> prefixFn = prefixParseFunctionMap.get(currentToken.getType());
 
         if (prefixFn == null) {
@@ -189,20 +196,37 @@ public class Parser {
 
         Expression left = prefixFn.get();
 
-        while (precedence.ordinal() < infixOperatorPrecedenceMap.getOrDefault(peekToken.getType(), Precedence.LOWEST).ordinal()) {
+        // get peek token precedence
+        Precedence peekPrecedence = getPeekPrecedence();
+        while (currentPrecedence.ordinal() < peekPrecedence.ordinal()) {
             nextToken(); // left -> operator
 
-            Function<Expression, Expression> infixFn = infixParseFunctionMap.get(currentToken.getType());
+            // get infix function for current token and if not found, get postfix function instead
+            Function<Expression, Expression> infixOrPostfixFn = infixParseFunctionMap.getOrDefault(
+                    currentToken.getType(),
+                    postfixParseFunctionMap.get(currentToken.getType())
+            );
 
-            if (infixFn == null) {
-                addError("Unknown infix function for expression: %s", currentToken);
+            if (infixOrPostfixFn == null) {
+                addError("Unknown infix or postfix function for expression: %s", currentToken);
                 return null;
             }
 
-            left = infixFn.apply(left);
+            left = infixOrPostfixFn.apply(left);
+            // update peek token precedence
+            peekPrecedence = getPeekPrecedence();
         }
 
         return left;
+    }
+
+    /**
+     * Returns the precedence of the peek token.
+     *
+     * @return the {@link Precedence} of the peek token
+     */
+    private Precedence getPeekPrecedence() {
+        return operatorPrecedenceMap.getOrDefault(peekToken.getType(), Precedence.LOWEST);
     }
 
     /**
@@ -262,7 +286,7 @@ public class Parser {
 
         nextToken(); // operator -> right
 
-        Expression right = parseExpression(infixOperatorPrecedenceMap.getOrDefault(operator.getTokenType(), Precedence.LOWEST));
+        Expression right = parseExpression(operatorPrecedenceMap.getOrDefault(operator.getTokenType(), Precedence.LOWEST));
 
         return new InfixExpression(left, operator, right);
     }
@@ -594,6 +618,23 @@ public class Parser {
         }
 
         return new StringExpression(currentToken.getLexeme());
+    }
+
+    /**
+     * Parses a postfix expression: {@code x++}
+     *
+     * @param left the left-hand side of the postfix expression
+     * @return the created {@link PostfixExpression}
+     */
+    private PostfixExpression parseExpressionPostfix(Expression left) {
+        Optional<Operator> optionalOperator = Operator.fromToken(currentToken.getType());
+
+        if (optionalOperator.isEmpty()) {
+            addError("current token %s is not a valid operator", currentToken);
+            return null;
+        }
+
+        return new PostfixExpression(left, optionalOperator.get());
     }
 
     private boolean expectToken(Token token, TokenType tokenType) {

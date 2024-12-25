@@ -216,6 +216,18 @@ class LexerTest {
                         new Token(TokenType.IDENTIFIER, "a"),
                         new Token(TokenType.ASSIGN, "="),
                         new Token(TokenType.STRING, "test")
+                )),
+                Arguments.of("a++ + 1", List.of(
+                        new Token(TokenType.IDENTIFIER, "a"),
+                        new Token(TokenType.INCREMENT, "++"),
+                        new Token(TokenType.PLUS, "+"),
+                        new Token(TokenType.INT, "1")
+                )),
+                Arguments.of("a-- + 1", List.of(
+                        new Token(TokenType.IDENTIFIER, "a"),
+                        new Token(TokenType.DECREMENT, "--"),
+                        new Token(TokenType.PLUS, "+"),
+                        new Token(TokenType.INT, "1")
                 ))
         );
     }

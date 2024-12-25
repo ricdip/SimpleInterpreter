@@ -66,10 +66,20 @@ public class Lexer implements Iterator<Token> {
             switch (currentChar) {
                 // operators
                 case Symbol.PLUS:
-                    token = new Token(TokenType.PLUS, String.valueOf(currentChar));
+                    if (peekChar == Symbol.PLUS) {
+                        token = new Token(TokenType.INCREMENT, String.valueOf(currentChar) + peekChar);
+                        readCharSkipWhitespace();
+                    } else {
+                        token = new Token(TokenType.PLUS, String.valueOf(currentChar));
+                    }
                     break;
                 case Symbol.MINUS:
-                    token = new Token(TokenType.MINUS, String.valueOf(currentChar));
+                    if (peekChar == Symbol.MINUS) {
+                        token = new Token(TokenType.DECREMENT, String.valueOf(currentChar) + peekChar);
+                        readCharSkipWhitespace();
+                    } else {
+                        token = new Token(TokenType.MINUS, String.valueOf(currentChar));
+                    }
                     break;
                 case Symbol.ASTERISK:
                     token = new Token(TokenType.ASTERISK, String.valueOf(currentChar));

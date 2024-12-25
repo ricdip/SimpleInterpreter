@@ -16,6 +16,8 @@ public enum TokenType {
     NEQ, // !=
     LTEQ, // <=
     GTEQ, // >=
+    INCREMENT, // ++
+    DECREMENT, // --
     // parenthesis
     LPAREN, // (
     RPAREN, // )

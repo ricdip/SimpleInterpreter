@@ -75,6 +75,8 @@ public class Evaluator {
             return evalIndexExpression(indexExpression, environment);
         } else if (node instanceof StringExpression stringExpression) {
             return new StringObject(stringExpression.getValue());
+        } else if (node instanceof PostfixExpression postfixExpression) {
+            return evalPostfixExpression(postfixExpression.getOperator(), postfixExpression.getLeft(), environment);
         } else {
             return new ErrorObject("Unknown AST node: %s", node);
         }
@@ -193,7 +195,8 @@ public class Evaluator {
         return switch (operator) {
             case MINUS -> evalPrefixExpressionOperatorMinus(evaluatedRight);
             case NEG -> evalPrefixExpressionOperatorNeg(evaluatedRight);
-            default -> new ErrorObject("Unknown prefix operator %s%s", operator.getSymbols(), right);
+            default ->
+                    new ErrorObject("Unknown prefix operator %s%s", operator.getSymbols(), evaluatedRight.getType().name());
         };
     }
 
@@ -627,6 +630,68 @@ public class Evaluator {
 
         } else {
             return new ErrorObject("Cannot use %s as index", evaluatedIndex.getType().name());
+        }
+    }
+
+    /**
+     * Evaluates a postfix expression and returns its result
+     *
+     * @param operator    the postfix {@link Operator}
+     * @param left        the {@link Expression} to which the operator is applied
+     * @param environment the {@link Environment} object that contains the bindings
+     * @return the result of the expression after the application of the operator
+     */
+    private EvaluatedObject evalPostfixExpression(Operator operator, Expression left, Environment environment) {
+        return switch (operator) {
+            case INCREMENT -> evalPostfixExpressionOperatorIncrement(left, environment);
+            case DECREMENT -> evalPostfixExpressionOperatorDecrement(left, environment);
+            default -> new ErrorObject("Unknown postfix operator %s%s", left, operator.getSymbols());
+        };
+    }
+
+    /**
+     * Evaluates a postfix expression case in which the {@link Operator} applied is '++'.
+     * Used by the evaluation of a PostfixExpression.
+     *
+     * @param left the {@link Expression} that represents the identifier whose pointed value will be incremented
+     * @return null object
+     */
+    private EvaluatedObject evalPostfixExpressionOperatorIncrement(Expression left, Environment environment) {
+        if (left instanceof IdentifierExpression identifier) {
+            EvaluatedObject evaluatedObject = environment.get(identifier);
+            if (evaluatedObject instanceof IntegerObject integerObject) {
+                environment.put(identifier, new IntegerObject(integerObject.getValue() + 1));
+                return Objects.NULL;
+            } else if (Objects.NULL.equals(evaluatedObject)) {
+                return new ErrorObject("Cannot apply postfix operator '++' to %s: not declared", left);
+            } else {
+                return new ErrorObject("Cannot apply postfix operator '++' to %s: not an integer", left);
+            }
+        } else {
+            return new ErrorObject("Cannot apply postfix operator '++' to %s", left);
+        }
+    }
+
+    /**
+     * Evaluates a postfix expression case in which the {@link Operator} applied is '--'.
+     * Used by the evaluation of a PostfixExpression.
+     *
+     * @param left the {@link Expression} that represents the identifier whose pointed value will be decremented
+     * @return null object
+     */
+    private EvaluatedObject evalPostfixExpressionOperatorDecrement(Expression left, Environment environment) {
+        if (left instanceof IdentifierExpression identifier) {
+            EvaluatedObject evaluatedObject = environment.get(identifier);
+            if (evaluatedObject instanceof IntegerObject integerObject) {
+                environment.put(identifier, new IntegerObject(integerObject.getValue() - 1));
+                return Objects.NULL;
+            } else if (Objects.NULL.equals(evaluatedObject)) {
+                return new ErrorObject("Cannot apply postfix operator '--' to %s: not declared", left);
+            } else {
+                return new ErrorObject("Cannot apply postfix operator '--' to %s: not an integer", left);
+            }
+        } else {
+            return new ErrorObject("Cannot apply postfix operator '--' to %s", left);
         }
     }
 }

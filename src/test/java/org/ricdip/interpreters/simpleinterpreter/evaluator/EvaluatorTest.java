@@ -130,7 +130,7 @@ class EvaluatorTest {
                 Arguments.of("1 + 2>= 3 + 5", """
                         false
                         """),
-                Arguments.of("let test = 1+5--2", """
+                Arguments.of("let test = 1+5-2", """
                         null
                         """),
                 // grouped expression
@@ -726,6 +726,23 @@ class EvaluatorTest {
                         str
                         """, """
                         "ab"
+                        """),
+                // postfix operators
+                Arguments.of("""
+                        let a = 1
+                        
+                        a++
+                        a
+                        """, """
+                        2
+                        """),
+                Arguments.of("""
+                        let a = 2
+                        
+                        a--
+                        a
+                        """, """
+                        1
                         """),
                 // more complex code
                 Arguments.of("""

@@ -6,10 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.ricdip.interpreters.simpleinterpreter.lexer.Lexer;
 import org.ricdip.interpreters.simpleinterpreter.parser.ast.impl.Program;
-import org.ricdip.interpreters.simpleinterpreter.token.Token;
-import org.ricdip.interpreters.simpleinterpreter.token.TokenType;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -168,9 +165,9 @@ class ParserTest {
                             (((1 >= 3) > 5))
                         }
                         """),
-                Arguments.of("let test = 1+5--2", """
+                Arguments.of("let test = 1+5-2", """
                         {
-                            (test = ((1 + 5) - (-2)))
+                            (test = ((1 + 5) - 2))
                         }
                         """),
                 // grouped expression
@@ -372,6 +369,57 @@ class ParserTest {
                 Arguments.of("\"test\"[0]", """
                         {
                             ("test"[0])
+                        }
+                        """),
+                // postfix expression
+                Arguments.of("a++", """
+                        {
+                            ((a++))
+                        }
+                        """),
+                Arguments.of("-a++", """
+                        {
+                            ((-(a++)))
+                        }
+                        """),
+                Arguments.of("a++ + 5", """
+                        {
+                            (((a++) + 5))
+                        }
+                        """),
+                Arguments.of("a++ * 5", """
+                        {
+                            (((a++) * 5))
+                        }
+                        """),
+                Arguments.of("a++ + 5 * 2", """
+                        {
+                            (((a++) + (5 * 2)))
+                        }
+                        """),
+                Arguments.of("a--", """
+                        {
+                            ((a--))
+                        }
+                        """),
+                Arguments.of("-a--", """
+                        {
+                            ((-(a--)))
+                        }
+                        """),
+                Arguments.of("a-- + 5", """
+                        {
+                            (((a--) + 5))
+                        }
+                        """),
+                Arguments.of("a-- * 5", """
+                        {
+                            (((a--) * 5))
+                        }
+                        """),
+                Arguments.of("a-- + 5 * 2", """
+                        {
+                            (((a--) + (5 * 2)))
                         }
                         """)
         );

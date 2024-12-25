@@ -20,7 +20,9 @@ public enum Operator {
     LTEQ(TokenType.LTEQ, Symbol.LT + String.valueOf(Symbol.EQUAL)),
     GTEQ(TokenType.GTEQ, Symbol.GT + String.valueOf(Symbol.EQUAL)),
     CALL(TokenType.LPAREN, Symbol.LPAREN),
-    INDEX(TokenType.LSQUARE, Symbol.LSQUARE);
+    INDEX(TokenType.LSQUARE, Symbol.LSQUARE),
+    INCREMENT(TokenType.INCREMENT, Symbol.PLUS + String.valueOf(Symbol.PLUS)),
+    DECREMENT(TokenType.DECREMENT, Symbol.MINUS + String.valueOf(Symbol.MINUS));
 
     private final TokenType tokenType;
     private final String symbols;
@@ -48,6 +50,8 @@ public enum Operator {
             case NEQ -> Optional.of(Operator.NEQ);
             case LTEQ -> Optional.of(Operator.LTEQ);
             case GTEQ -> Optional.of(Operator.GTEQ);
+            case INCREMENT -> Optional.of(Operator.INCREMENT);
+            case DECREMENT -> Optional.of(Operator.DECREMENT);
             default -> Optional.empty();
         };
     }
