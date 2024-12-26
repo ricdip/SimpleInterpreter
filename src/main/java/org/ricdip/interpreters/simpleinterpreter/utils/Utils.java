@@ -1,9 +1,13 @@
 package org.ricdip.interpreters.simpleinterpreter.utils;
 
+import org.apache.commons.io.FileUtils;
 import org.ricdip.interpreters.simpleinterpreter.evaluator.object.ErrorObject;
 import org.ricdip.interpreters.simpleinterpreter.evaluator.object.ObjectTypes;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -77,5 +81,16 @@ public final class Utils {
                 String.join(" or ", Stream.of(expectedObjectTypes).map(Enum::name).toList()),
                 unexpectedType
         );
+    }
+
+    public static String readProgramFromFile(String filePath) {
+        File file = new File(filePath);
+
+        try {
+            // read from file and replace all line separators with one line separator
+            return FileUtils.readFileToString(file, StandardCharsets.UTF_8).replaceAll("\\R+", "\n");
+        } catch (IOException e) {
+            throw new RuntimeException("An error occurred during file reading", e);
+        }
     }
 }

@@ -17,6 +17,7 @@
         <picocli.version>4.7.6</picocli.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <junit-jupiter-api.version>5.11.3</junit-jupiter-api.version>
+        <commons-io.version>2.18.0</commons-io.version>
         <!-- plugins versions -->
         <spring-boot-maven-plugin.version>3.3.0</spring-boot-maven-plugin.version>
     </properties>
@@ -37,6 +38,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

@@ -26,6 +26,10 @@ public final class RPPL {
                 Utils.print(out, Constants.PROMPT_CONTINUE);
             }
 
+            if (!scanner.hasNextLine()) {
+                break;
+            }
+
             line = line + " " + scanner.nextLine();
 
             if (StringUtils.isBlank(line)) {

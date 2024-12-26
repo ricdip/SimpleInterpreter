@@ -16,6 +16,11 @@ public final class RLPL {
         Scanner scanner = new Scanner(in);
         while (true) {
             Utils.print(out, Constants.PROMPT);
+
+            if (!scanner.hasNextLine()) {
+                break;
+            }
+
             String line = scanner.nextLine();
 
             if (StringUtils.isBlank(line)) {
