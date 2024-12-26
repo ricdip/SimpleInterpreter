@@ -16,6 +16,7 @@ public final class Keyword {
         keywords.put("true", TokenType.TRUE);
         keywords.put("false", TokenType.FALSE);
         keywords.put("return", TokenType.RETURN);
+        keywords.put("while", TokenType.WHILE);
     }
 
     public static TokenType identify(String identifier) {

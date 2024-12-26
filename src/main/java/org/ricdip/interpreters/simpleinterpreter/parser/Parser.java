@@ -131,6 +131,8 @@ public class Parser {
                 return parseLetStatement();
             case RETURN:
                 return parseReturnStatement();
+            case WHILE:
+                return parseWhileStatement();
             default:
                 return parseExpressionStatement();
         }
@@ -635,6 +637,42 @@ public class Parser {
         }
 
         return new PostfixExpression(left, optionalOperator.get());
+    }
+
+    /**
+     * Parses a while statement: {@code while (<expression>) <block-statement> }
+     *
+     * @return the created {@link WhileStatement}
+     */
+    private WhileStatement parseWhileStatement() {
+        if (!expectToken(currentToken, TokenType.WHILE)) {
+            addUnexpectedTokenError(TokenType.WHILE);
+            return null;
+        }
+
+        nextToken(); // while -> (
+
+        if (!expectToken(currentToken, TokenType.LPAREN)) {
+            addUnexpectedTokenError(TokenType.LPAREN);
+            return null;
+        }
+
+        nextToken(); // ( -> condition expression
+
+        Expression condition = parseExpression(Precedence.LOWEST);
+
+        nextToken(); // expression -> )
+
+        if (!expectToken(currentToken, TokenType.RPAREN)) {
+            addUnexpectedTokenError(TokenType.RPAREN);
+            return null;
+        }
+
+        nextToken(); // ) -> {
+
+        BlockStatement whileBlock = parseBlockStatement();
+
+        return new WhileStatement(condition, whileBlock);
     }
 
     private boolean expectToken(Token token, TokenType tokenType) {

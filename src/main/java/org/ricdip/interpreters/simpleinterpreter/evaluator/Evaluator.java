@@ -77,6 +77,8 @@ public class Evaluator {
             return new StringObject(stringExpression.getValue());
         } else if (node instanceof PostfixExpression postfixExpression) {
             return evalPostfixExpression(postfixExpression.getOperator(), postfixExpression.getLeft(), environment);
+        } else if (node instanceof WhileStatement whileStatement) {
+            return evalWhileStatement(whileStatement.getCondition(), whileStatement.getWhileBlock(), environment);
         } else {
             return new ErrorObject("Unknown AST node: %s", node);
         }
@@ -693,5 +695,43 @@ public class Evaluator {
         } else {
             return new ErrorObject("Cannot apply postfix operator '--' to %s", left);
         }
+    }
+
+    /**
+     * Evaluates a while statement
+     *
+     * @param condition   the while expression boolean condition
+     * @param whileBlock  the {@link BlockStatement} while block evaluated if {@code condition} expression evaluates to {@code true}
+     * @param environment the {@link Environment} object that contains the bindings
+     * @return null object
+     */
+    private EvaluatedObject evalWhileStatement(Expression condition, BlockStatement whileBlock, Environment environment) {
+        EvaluatedObject isTrue = eval(condition, environment);
+
+        if (isTrue instanceof ErrorObject) {
+            return isTrue;
+        } else if (!(isTrue instanceof BooleanObject)) {
+            return new ErrorObject("While statement condition must be a %s expression, got %s", ObjectTypes.BOOLEAN.name(), isTrue.getType().name());
+        }
+
+        boolean whileCondition = ((BooleanObject) isTrue).getValue();
+
+        // if while condition is true
+        if (whileCondition) {
+            // evaluates the while block: the evaluation changes the environment
+            eval(whileBlock, environment);
+            // recursively call this function: the environment keeps the changes done by the previous eval call.
+            // Example:
+            // > let a = 0
+            // .. while(a < 2) {
+            // .. print(a)
+            // .. a++
+            // .. }
+            //
+            // the code above will print 0 and 1 and after that will exit the while block
+            evalWhileStatement(condition, whileBlock, environment);
+        }
+
+        return Objects.NULL;
     }
 }

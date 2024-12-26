@@ -421,6 +421,12 @@ class ParserTest {
                         {
                             (((a--) + (5 * 2)))
                         }
+                        """),
+                // while statement
+                Arguments.of("while(a <= 10) { 1 a++ }", """
+                        {
+                            while ((a <= 10)) { (1) ; ((a++)) }
+                        }
                         """)
         );
     }

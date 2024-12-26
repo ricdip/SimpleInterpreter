@@ -744,6 +744,19 @@ class EvaluatorTest {
                         """, """
                         1
                         """),
+                // while statement
+                Arguments.of("""
+                        let a = 0
+                        
+                        while(a < 3) {
+                            print(a)
+                            a++
+                        }
+                        
+                        a
+                        """, """
+                        3
+                        """),
                 // more complex code
                 Arguments.of("""
                         let map = fn(array, func){

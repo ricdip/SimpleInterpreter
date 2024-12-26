@@ -228,6 +228,18 @@ class LexerTest {
                         new Token(TokenType.DECREMENT, "--"),
                         new Token(TokenType.PLUS, "+"),
                         new Token(TokenType.INT, "1")
+                )),
+                Arguments.of("while(a <= 5) { a++ }", List.of(
+                        new Token(TokenType.WHILE, "while"),
+                        new Token(TokenType.LPAREN, "("),
+                        new Token(TokenType.IDENTIFIER, "a"),
+                        new Token(TokenType.LTEQ, "<="),
+                        new Token(TokenType.INT, "5"),
+                        new Token(TokenType.RPAREN, ")"),
+                        new Token(TokenType.LBRACE, "{"),
+                        new Token(TokenType.IDENTIFIER, "a"),
+                        new Token(TokenType.INCREMENT, "++"),
+                        new Token(TokenType.RBRACE, "}")
                 ))
         );
     }

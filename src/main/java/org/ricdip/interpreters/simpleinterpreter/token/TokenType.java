@@ -34,6 +34,7 @@ public enum TokenType {
     TRUE, // true
     FALSE, // false
     RETURN, // return
+    WHILE, // while
     // others
     COMMA, // ,
     EOF,
