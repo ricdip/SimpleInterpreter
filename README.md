@@ -258,13 +258,14 @@ typed in the interpreted, the builtin help function will be displayed:
 ## Help message
 
 ```
-Usage: <jar file name> [-hV] [-ml | -mp | -me]
-A simple language interpreter written in Java
+Usage: <jar file name> [-hV] [-f=<filePath>] [-ml | -mp | -me]
+A simple language interpreter written in Java.
+  -f, --file=<filePath>   Read program from file path.
   -h, --help              Show this help message and exit.
       -me, --mode-evaluator
-                          Enable evaluator mode [default]
-      -ml, --mode-lexer   Enable lexer mode
-      -mp, --mode-parse   Enable parse mode
+                          Enable evaluator mode [default].
+      -ml, --mode-lexer   Enable lexer mode.
+      -mp, --mode-parse   Enable parse mode.
   -V, --version           Print version information and exit.
 ```
 

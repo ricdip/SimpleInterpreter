@@ -9,11 +9,11 @@ import picocli.CommandLine;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExecMode {
-    @CommandLine.Option(names = {"-ml", "--mode-lexer"}, description = "Enable lexer mode")
+    @CommandLine.Option(names = {"-ml", "--mode-lexer"}, description = "Enable lexer mode.")
     private boolean rlpl;
-    @CommandLine.Option(names = {"-mp", "--mode-parse"}, description = "Enable parse mode")
+    @CommandLine.Option(names = {"-mp", "--mode-parse"}, description = "Enable parse mode.")
     private boolean rppl;
-    @CommandLine.Option(names = {"-me", "--mode-evaluator"}, description = "Enable evaluator mode [default]")
+    @CommandLine.Option(names = {"-me", "--mode-evaluator"}, description = "Enable evaluator mode [default].")
     private boolean repl;
 
     public ExecModeTypes getExecMode() {

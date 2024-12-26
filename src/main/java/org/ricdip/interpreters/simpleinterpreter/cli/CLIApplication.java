@@ -17,14 +17,14 @@ import java.nio.charset.StandardCharsets;
         name = "<jar file name>",
         versionProvider = BuildInfoVersionProvider.class,
         mixinStandardHelpOptions = true,
-        description = "A simple language interpreter written in Java"
+        description = "A simple language interpreter written in Java."
 )
 public class CLIApplication implements Runnable {
 
     @CommandLine.ArgGroup
     private final ExecMode execMode = new ExecMode();
 
-    @CommandLine.Option(names = {"-f", "--file"}, description = "Read program from file path")
+    @CommandLine.Option(names = {"-f", "--file"}, description = "Read program from file path.")
     private String filePath = "";
 
     @Override
