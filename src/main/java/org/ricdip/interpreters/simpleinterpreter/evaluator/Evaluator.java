@@ -656,14 +656,14 @@ public class Evaluator {
      * Used by the evaluation of a PostfixExpression.
      *
      * @param left the {@link Expression} that represents the identifier whose pointed value will be incremented
-     * @return null object
+     * @return the {@link IntegerObject} object before the increment
      */
     private EvaluatedObject evalPostfixExpressionOperatorIncrement(Expression left, Environment environment) {
         if (left instanceof IdentifierExpression identifier) {
             EvaluatedObject evaluatedObject = environment.get(identifier);
             if (evaluatedObject instanceof IntegerObject integerObject) {
                 environment.put(identifier, new IntegerObject(integerObject.getValue() + 1));
-                return Objects.NULL;
+                return integerObject;
             } else if (Objects.NULL.equals(evaluatedObject)) {
                 return new ErrorObject("Cannot apply postfix operator '++' to %s: not declared", left);
             } else {
@@ -679,14 +679,14 @@ public class Evaluator {
      * Used by the evaluation of a PostfixExpression.
      *
      * @param left the {@link Expression} that represents the identifier whose pointed value will be decremented
-     * @return null object
+     * @return the {@link IntegerObject} object before the decrement
      */
     private EvaluatedObject evalPostfixExpressionOperatorDecrement(Expression left, Environment environment) {
         if (left instanceof IdentifierExpression identifier) {
             EvaluatedObject evaluatedObject = environment.get(identifier);
             if (evaluatedObject instanceof IntegerObject integerObject) {
                 environment.put(identifier, new IntegerObject(integerObject.getValue() - 1));
-                return Objects.NULL;
+                return integerObject;
             } else if (Objects.NULL.equals(evaluatedObject)) {
                 return new ErrorObject("Cannot apply postfix operator '--' to %s: not declared", left);
             } else {
@@ -724,8 +724,8 @@ public class Evaluator {
             // Example:
             // > let a = 0
             // .. while(a < 2) {
-            // .. print(a)
-            // .. a++
+            // ..   print(a)
+            // ..   a++
             // .. }
             //
             // the code above will print 0 and 1 and after that will exit the while block

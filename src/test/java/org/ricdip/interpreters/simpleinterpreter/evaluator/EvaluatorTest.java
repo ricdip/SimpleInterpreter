@@ -732,6 +732,20 @@ class EvaluatorTest {
                         let a = 1
                         
                         a++
+                        """, """
+                        1
+                        """),
+                Arguments.of("""
+                        let a = 2
+                        
+                        a--
+                        """, """
+                        2
+                        """),
+                Arguments.of("""
+                        let a = 1
+                        
+                        a++
                         a
                         """, """
                         2
