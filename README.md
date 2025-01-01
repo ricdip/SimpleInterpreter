@@ -10,9 +10,9 @@ precedence handling.
 
 ## Implemented features
 
-- Implemented types: `integer`, `boolean`, `array`, `string`.
+- Implemented **types**: `integer`, `boolean`, `array`, `string`.
 
-- Let statement: used to declare a variable in the environment. In the following example, `a` is an identifier:
+- **Let statement**: used to declare a variable in the environment. In the following example, `a` is an identifier:
     ```
     > let a = 2
     null
@@ -21,7 +21,7 @@ precedence handling.
     2
     ```
 
-- Boolean infix operators: `<`, `>`, `<=`, `>=`, `==`, `!=`:
+- **Boolean infix operators**: `<`, `>`, `<=`, `>=`, `==`, `!=`:
     ```
     > 1 == 2
     false
@@ -30,7 +30,7 @@ precedence handling.
     true
     ```
 
-- Integer infix operators: `+`, `-`, `*`, `/`:
+- **Integer infix operators**: `+`, `-`, `*`, `/`:
     ```
     > 1 + 2
     3
@@ -39,13 +39,13 @@ precedence handling.
     10
     ```
 
-- Boolean prefix operators: `!`:
+- **Boolean prefix operators**: `!`:
     ```
     > !true
     false
     ```
 
-- Integer prefix operators: `-`:
+- **Integer prefix operators**: `-`:
     ```
     > -1
     -1
@@ -84,8 +84,8 @@ precedence handling.
     4
     ```
 
-- Conditional expression: if the boolean condition is true then the if-branch is evaluated. It is evaluated the
-else-branch otherwise:
+- **Conditional expression**: if the boolean condition is `true` then the `if-branch` is evaluated. It is evaluated the
+`else-branch` otherwise:
     ```
     > if(1 < 5) { 2 } else { 3 }
     2
@@ -97,7 +97,7 @@ else-branch otherwise:
     null
     ```
 
-- Function expression: create a callable function that returns the result of the last executed statement if called:
+- **Function expression**: create a callable function that returns the result of the last executed statement if called:
     ```
     > fn(){ 1 + 2 }
     null
@@ -109,7 +109,7 @@ else-branch otherwise:
     9
     ```
 
-- Call expression: call a callable function and return its result:
+- **Call expression**: call a callable function and return its result:
     ```
     > fn(x){ x + 2 }(8)
     10
@@ -127,7 +127,7 @@ else-branch otherwise:
     16
     ```
 
-- Return statement: immediately return an expression from a block statement:
+- **Return statement**: immediately return an expression from a block statement:
     ```
     > let test = fn() {
     ..   if(true) {
@@ -147,7 +147,7 @@ else-branch otherwise:
     1
     ```
 
-- Closures: the combination of a function bundled together (enclosed) with references to its surrounding state
+- **Closures**: the combination of a function bundled together (enclosed) with references to its surrounding state
 (lexical environment). A Closure gives a function access to its outer scope:
     ```
     > let adder = fn(x) { fn(n) { n + x } }
@@ -159,10 +159,10 @@ else-branch otherwise:
     > adderTwo(10)
     12
     ```
-  Explained example: `adder` has the parameter `x` (its local variable). The anonymous inner function has the parameter `n` (its local variable). 
-The inner function returns the summation of `n` with `x`. The inner function has access to the variable `x` that is declared in the outer scope.
+  *Explained example*: `adder` has the parameter `x` (its local variable). The anonymous inner function has the parameter `n` (its local variable). 
+The inner function returns the sum of `n` and `x`. The inner function has access to the variable `x` that is declared in the outer scope.
 
-- Array indexing and reverse indexing:
+- **Array indexing and reverse indexing**:
     ```
     > let a = [1,2,3]
     null
@@ -180,7 +180,7 @@ The inner function returns the summation of `n` with `x`. The inner function has
     3
     ```
 
-- String indexing and reverse indexing:
+- **String indexing and reverse indexing**:
     ```
     > let a = "hello world"
     null
@@ -192,23 +192,23 @@ The inner function returns the summation of `n` with `x`. The inner function has
     "d"
     ```
 
-- Builtin functions: `print`, `len`, `first`, `rest`, `push`, `append`, `pop`, `removeLast`. If a builtin function is
+- **Builtin functions**: `print`, `len`, `first`, `rest`, `push`, `append`, `pop`, `removeLast`. If a builtin function is
 typed in the interpreted, the builtin help function will be displayed:
     ```
     > print
         print(x -> any, ...) -> null: prints all parameters
     ```
   The following builtin functions are included in the language:
-    - `print`: `print(x -> any, ...) -> null`: prints all parameters
-    - `len`: `len(x -> array|string) -> integer`: returns the number of elements in `x`
-    - `first`: `first(x -> array|string) -> any|string`: returns the first element in `x`
-    - `rest`: `rest(x -> array|string) -> array|string`: returns all the elements in `x` excluded the first element
-    - `push`: `push(x -> array|string, y: any) -> array|string`: returns a new object with the new element `y` added as first element of `x`
-    - `append`: `append(x -> array|string, y: any) -> array|string`: returns a new object with the new element `y` added as last element of `x`
-    - `pop`: `pop(x -> array|string) -> any|string`: removes the first element from `x` and returns it
-    - `removeLast`: `removeLast(x -> array|string) -> any|string`: removes the last element from `x` and returns it
+    - `print`: `print(x -> any, ...) -> null`: prints all parameters.
+    - `len`: `len(x -> array|string) -> integer`: returns the number of elements in `x`.
+    - `first`: `first(x -> array|string) -> any|string`: returns the first element in `x`.
+    - `rest`: `rest(x -> array|string) -> array|string`: returns all the elements in `x` excluded the first element.
+    - `push`: `push(x -> array|string, y: any) -> array|string`: returns a new object with the new element `y` added as first element of `x`.
+    - `append`: `append(x -> array|string, y: any) -> array|string`: returns a new object with the new element `y` added as last element of `x`.
+    - `pop`: `pop(x -> array|string) -> any|string`: removes the first element from `x` and returns it.
+    - `removeLast`: `removeLast(x -> array|string) -> any|string`: removes the last element from `x` and returns it.
 
-- Postfix operators: increment (`++`), decrement (`--`). Both operators perform the increment/decrement by `1` but return the previous value:
+- **Postfix operators**: increment (`++`), decrement (`--`). Both operators perform the increment/decrement by `1` and return the previous value:
     ```
     > let a = 1
     null
@@ -226,7 +226,7 @@ typed in the interpreted, the builtin help function will be displayed:
     1
     ```
 
-- While statement: the block statement is evaluated while the boolean condition is true:
+- **While statement**: the block statement is evaluated while the boolean condition is `true`:
     ```
     > let a = 0
     null
@@ -244,7 +244,7 @@ typed in the interpreted, the builtin help function will be displayed:
     2
     ```
 
-- Recursion: the recursive function can call itself from within its own code:
+- **Recursion**: the recursive function can call itself from within its own code:
     ```
     > let fact = fn(n) {
     ..   if(n == 0) {
@@ -258,7 +258,7 @@ typed in the interpreted, the builtin help function will be displayed:
     120
     ```
 
-- Read and execute program source code from a file:
+- Read and execute the program source code from a file:
     ```bash
     user@host:~$ java -jar SimpleInterpreter-1.0.0.jar -f program
     ```
