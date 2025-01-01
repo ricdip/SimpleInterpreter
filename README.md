@@ -147,17 +147,20 @@ else-branch otherwise:
     1
     ```
 
-- Closures:
+- Closures: the combination of a function bundled together (enclosed) with references to its surrounding state
+(lexical environment). A Closure gives a function access to its outer scope:
     ```
     > let adder = fn(x) { fn(n) { n + x } }
     null
     
-    > let adder2 = adder(2)
+    > let adderTwo = adder(2)
     null
   
-    > adder2(15)
-    16
+    > adderTwo(10)
+    12
     ```
+  Explained example: `adder` has the parameter `x` (its local variable). The anonymous inner function has the parameter `n` (its local variable). 
+The inner function returns the summation of `n` with `x`. The inner function has access to the variable `x` that is declared in the outer scope.
 
 - Array indexing and reverse indexing:
     ```
@@ -197,15 +200,15 @@ typed in the interpreted, the builtin help function will be displayed:
     ```
   The following builtin functions are included in the language:
     - `print`: `print(x -> any, ...) -> null`: prints all parameters
-    - `len`: `len(x -> array|string) -> integer`: returns the number of elements in 'x'
-    - `first`: `first(x -> array|string) -> any|string`: returns the first element in 'x'
-    - `rest`: `rest(x -> array|string) -> array|string`: returns all the elements in 'x' excluded the first element
-    - `push`: `push(x -> array|string, y: any) -> array|string`: returns a new object with the new element 'y' added as first element of 'x'
-    - `append`: `append(x -> array|string, y: any) -> array|string`: returns a new object with the new element 'y' added as last element of 'x'
-    - `pop`: `pop(x -> array|string) -> any|string`: removes the first element from 'x' and returns it
-    - `removeLast`: `removeLast(x -> array|string) -> any|string`: removes the last element from 'x' and returns it
+    - `len`: `len(x -> array|string) -> integer`: returns the number of elements in `x`
+    - `first`: `first(x -> array|string) -> any|string`: returns the first element in `x`
+    - `rest`: `rest(x -> array|string) -> array|string`: returns all the elements in `x` excluded the first element
+    - `push`: `push(x -> array|string, y: any) -> array|string`: returns a new object with the new element `y` added as first element of `x`
+    - `append`: `append(x -> array|string, y: any) -> array|string`: returns a new object with the new element `y` added as last element of `x`
+    - `pop`: `pop(x -> array|string) -> any|string`: removes the first element from `x` and returns it
+    - `removeLast`: `removeLast(x -> array|string) -> any|string`: removes the last element from `x` and returns it
 
-- Postfix operators: increment (`++`), decrement (`--`). Both operators perform the increment/decrement by 1 but return the previous value:
+- Postfix operators: increment (`++`), decrement (`--`). Both operators perform the increment/decrement by `1` but return the previous value:
     ```
     > let a = 1
     null
@@ -241,7 +244,7 @@ typed in the interpreted, the builtin help function will be displayed:
     2
     ```
 
-- Recursion:
+- Recursion: the recursive function can call itself from within its own code:
     ```
     > let fact = fn(n) {
     ..   if(n == 0) {
@@ -253,6 +256,11 @@ typed in the interpreted, the builtin help function will be displayed:
   
     > fact(5)
     120
+    ```
+
+- Read and execute program source code from a file:
+    ```bash
+    user@host:~$ java -jar SimpleInterpreter-1.0.0.jar -f program
     ```
 
 ## Help message
